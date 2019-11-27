@@ -30,11 +30,28 @@ class Employees_Name(Resource):
         query = conn.execute("select * from employees where EmployeeId =%d " % int(employee_id))
         result = {'data': [dict(zip(tuple(query.keys()), i)) for i in query.cursor]}
         return jsonify(result)
+    def post(self):
+        return "Nothing here"
 
+class Home(Resource):
+    def get(self):
+        return "This is Home"
 
+class Employees_Names(Resource) :
+    def get(self):
+        conn = db_connect.connect()
+        query = conn.execute("select * from employees")
+        result = query.cursor.fetchall()
+        names = {}
+        for emp in result :
+            names[emp[0]] = emp[1]+' '+emp[2]
+        return jsonify(names)
+
+api.add_resource(Home, '/') #Naveen's edit
 api.add_resource(Employees, '/employees')  # Route_1
 api.add_resource(Tracks, '/tracks')  # Route_2
 api.add_resource(Employees_Name, '/employees/<employee_id>')  # Route_3
+api.add_resource(Employees_Names, '/emp')
 
 if __name__ == '__main__':
     app.run(port='5002')
